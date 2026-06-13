@@ -1,0 +1,27 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "unimate-huit",
+          "appId": "1:478595349471:android:796585090b44ee03bde26a",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "unimate-huit",
+          "configurations": {
+            "android": "1:478595349471:android:796585090b44ee03bde26a",
+            "ios": "1:478595349471:ios:5bf9c3c2b3dd57b9bde26a",
+            "web": "1:478595349471:web:4bdc6b8d81adecd9bde26a"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}

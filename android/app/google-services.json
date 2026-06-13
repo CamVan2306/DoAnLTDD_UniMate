@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "478595349471",
+    "project_id": "unimate-huit",
+    "storage_bucket": "unimate-huit.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:478595349471:android:796585090b44ee03bde26a",
+        "android_client_info": {
+          "package_name": "com.example.unimate_huit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "478595349471-gqduuhl34vr1m8kasoffuvfsagaho7rc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.unimate_huit",
+            "certificate_hash": "50c82960109b757437ece8dd7ef6207848a2f14d"
+          }
+        },
+        {
+          "client_id": "478595349471-m9t1js871op3tv34s5n4hfh4a3ns0fvk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCy6YonNrGj6woTKlh_WMm-tX_2ibnJN8g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "478595349471-m9t1js871op3tv34s5n4hfh4a3ns0fvk.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "478595349471-8o7vpqv0me7ab546tn67n5m983gv79h3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.unimateHuit"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
