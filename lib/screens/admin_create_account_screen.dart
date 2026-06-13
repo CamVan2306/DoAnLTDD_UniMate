@@ -35,7 +35,7 @@ class _AdminCreateAccountScreenState extends State<AdminCreateAccountScreen> {
   void _submit() async {
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
-    final password = '123456'; // Mặc định là 123456 theo yêu cầu
+    final password = '123456';
     final code = _codeController.text.trim();
     final phone = _phoneController.text.trim();
 
@@ -69,7 +69,6 @@ class _AdminCreateAccountScreenState extends State<AdminCreateAccountScreen> {
       );
       return;
     }
-
 
     if (_selectedRole == 'student' &&
         (_selectedClassName == null || _selectedClassName!.isEmpty)) {
@@ -148,8 +147,14 @@ class _AdminCreateAccountScreenState extends State<AdminCreateAccountScreen> {
                   _buildDropdown<String>(
                     value: _selectedRole,
                     items: const [
-                      DropdownMenuItem(value: 'student', child: Text('Sinh viên')),
-                      DropdownMenuItem(value: 'lecturer', child: Text('Giảng viên')),
+                      DropdownMenuItem(
+                        value: 'student',
+                        child: Text('Sinh viên'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'lecturer',
+                        child: Text('Giảng viên'),
+                      ),
                     ],
                     onChanged: (val) {
                       setState(() {
@@ -200,9 +205,7 @@ class _AdminCreateAccountScreenState extends State<AdminCreateAccountScreen> {
                     hint: 'Nhập số điện thoại...',
                     icon: Icons.phone_outlined,
                     keyboardType: TextInputType.phone,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                    ],
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   ),
                   if (_selectedRole == 'student') ...[
                     const SizedBox(height: 16),
@@ -214,11 +217,16 @@ class _AdminCreateAccountScreenState extends State<AdminCreateAccountScreen> {
                         if (snapshot.hasError) {
                           return Text(
                             'Lỗi: ${snapshot.error}',
-                            style: const TextStyle(color: Colors.red, fontSize: 12),
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 12,
+                            ),
                           );
                         }
                         if (!snapshot.hasData) {
-                          return const Center(child: CircularProgressIndicator());
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
                         }
                         final classes = snapshot.data!;
                         if (classes.isEmpty) {

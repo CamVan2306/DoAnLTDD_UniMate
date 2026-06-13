@@ -40,17 +40,15 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
     _invitationSub = FirebaseFirestore.instance
         .collection('invitations')
-        .where('invitee_uid', isEqualTo: user.uid) // Sửa: dùng đúng field name
-        .where('status', isEqualTo: 'pending') // Sửa: dùng đúng status value
+        .where('invitee_uid', isEqualTo: user.uid)
+        .where('status', isEqualTo: 'pending') //
         .snapshots()
         .listen((snapshot) {
           for (var change in snapshot.docChanges) {
             if (change.type == DocumentChangeType.added) {
               final data = change.doc.data();
               if (data != null) {
-                final groupName =
-                    data['group_name'] ??
-                    'Một nhóm'; // Sửa: dùng đúng field name
+                final groupName = data['group_name'] ?? 'Một nhóm';
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

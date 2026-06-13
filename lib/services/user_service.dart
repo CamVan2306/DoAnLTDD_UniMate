@@ -11,7 +11,6 @@ class UserService {
   Stream<UserModel> streamUser(String uid) {
     return _db.collection('users').doc(uid).snapshots().map((snapshot) {
       if (snapshot.exists && snapshot.data() != null) {
-        // SỬA LỖI: Model mới của bạn chỉ cần truyền Map data, không cần snapshot.id
         return UserModel.fromMap(snapshot.data()!);
       } else {
         throw Exception("Không tìm thấy dữ liệu người dùng!");
@@ -38,21 +37,26 @@ class UserService {
     }
   }
 
-  // [ADMIN] Tạo tài khoản mới (Sử dụng Secondary App để không bị đăng xuất Admin)
+  // [ADMIN] Tạo tài khoản mới
   Future<bool> createAccountByAdmin(UserModel newUser, String password) async {
     FirebaseApp? tempApp;
     try {
       // 1. Khởi tạo App phụ với tên duy nhất (tránh lỗi trùng tên App)
-      String tempAppName = 'TemporaryApp_${DateTime.now().millisecondsSinceEpoch}';
+      String tempAppName =
+          'TemporaryApp_${DateTime.now().millisecondsSinceEpoch}';
       tempApp = await Firebase.initializeApp(
         name: tempAppName,
         options: Firebase.app().options,
       );
 
       // 2. Tạo User trên App phụ
-      UserCredential userCredential = await FirebaseAuth.instanceFor(app: tempApp)
-          .createUserWithEmailAndPassword(
-              email: newUser.email, password: password);
+      UserCredential userCredential =
+          await FirebaseAuth.instanceFor(
+            app: tempApp,
+          ).createUserWithEmailAndPassword(
+            email: newUser.email,
+            password: password,
+          );
 
       if (userCredential.user != null) {
         // 3. Gán UID mới và lưu vào Firestore qua App chính

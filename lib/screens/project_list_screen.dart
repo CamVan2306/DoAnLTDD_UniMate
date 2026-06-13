@@ -118,10 +118,9 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                           }
                           final subjects = snapshot.data ?? [];
                           return _buildDropdownBox(
-                            defaultLabel: 'Môn', // Sửa hiển thị gốc thành 'Môn'
+                            defaultLabel: 'Môn',
                             value: selectedSubjectFilter,
                             items: [
-                              // Trong list sổ xuống, mục đầu vẫn là 'Tất cả'
                               const DropdownMenuItem<String?>(
                                 value: null,
                                 child: Text(
@@ -144,7 +143,8 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                                 selectedSubjectFilter = newValue;
                                 if (newValue == null) {
                                   selectedSubjectId = null;
-                                  _classStream = SystemDataService().streamAllClasses();
+                                  _classStream = SystemDataService()
+                                      .streamAllClasses();
                                 } else {
                                   final found = subjects.where(
                                     (s) => s.name == newValue,
@@ -154,9 +154,12 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                                       : null;
                                   if (selectedSubjectId != null) {
                                     _classStream = SystemDataService()
-                                        .streamClassesBySubject(selectedSubjectId!);
+                                        .streamClassesBySubject(
+                                          selectedSubjectId!,
+                                        );
                                   } else {
-                                    _classStream = SystemDataService().streamAllClasses();
+                                    _classStream = SystemDataService()
+                                        .streamAllClasses();
                                   }
                                 }
                                 selectedClassFilter = null;
@@ -182,7 +185,8 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                             );
                           }
                           final classes = snapshot.data ?? [];
-                          if (snapshot.connectionState == ConnectionState.active &&
+                          if (snapshot.connectionState ==
+                                  ConnectionState.active &&
                               selectedClassFilter != null &&
                               !classes.any(
                                 (c) => c.name == selectedClassFilter,
@@ -194,7 +198,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                             });
                           }
                           return _buildDropdownBox(
-                            defaultLabel: 'Lớp', // Sửa hiển thị gốc thành 'Lớp'
+                            defaultLabel: 'Lớp',
                             value: selectedClassFilter,
                             items: [
                               const DropdownMenuItem<String?>(
@@ -265,7 +269,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                         }).toList();
                       }
 
-                      // Lọc theo Môn học (từ Dropdown)
+                      // Lọc theo Môn học
                       if (selectedSubjectFilter != null) {
                         projects = projects
                             .where(
@@ -274,17 +278,19 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                             .toList();
                       }
 
-                      // Lọc theo Lớp học phần (từ Dropdown)
+                      // Lọc theo Lớp học phần
                       if (selectedClassFilter != null) {
                         projects = projects
                             .where((p) => p.courseClass == selectedClassFilter)
                             .toList();
                       }
 
-                      // Lọc theo trạng thái ban đầu (nếu có truyền vào)
+                      // Lọc theo trạng thái ban đầu
                       if (widget.initialStatusFilter != null) {
                         projects = projects
-                            .where((p) => p.status == widget.initialStatusFilter)
+                            .where(
+                              (p) => p.status == widget.initialStatusFilter,
+                            )
                             .toList();
                       }
 
@@ -311,7 +317,6 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
     );
   }
 
-  // CẬP NHẬT HÀM NÀY: Dùng selectedItemBuilder để Custom text hiển thị bên ngoài
   Widget _buildDropdownBox({
     required String defaultLabel,
     required String? value,
@@ -329,7 +334,6 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
         child: DropdownButton<String?>(
           value: value,
           isExpanded: true,
-          // Khi value == null (Đang chọn "Tất cả"), hint này sẽ được hiển thị
           hint: Text(
             defaultLabel,
             style: const TextStyle(
@@ -339,7 +343,6 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
             ),
           ),
           icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF003B73)),
-          // Tùy chỉnh hiển thị mục ĐANG ĐƯỢC CHỌN (khi value != null)
           selectedItemBuilder: (BuildContext context) {
             return items.map<Widget>((DropdownMenuItem<String?> item) {
               return Container(
@@ -365,7 +368,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
   }
 }
 
-// ─── PROJECT CARD (Giữ nguyên) ────────────────────────────────────────────────────────────
+// ─── PROJECT CARD  ──
 
 class ProjectCard extends StatelessWidget {
   final ProjectModel project;

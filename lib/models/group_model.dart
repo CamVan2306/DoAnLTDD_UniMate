@@ -7,16 +7,13 @@ class GroupModel {
   final String projectName;
   final String leaderUid; // Người tạo nhóm mặc định là Leader
   final List<String> memberUids;
-  final String lecturerUid; // BỔ SUNG: Dùng để Giảng viên query nhóm của mình
+  final String lecturerUid;
   final String status; // 'Chờ duyệt', 'Đang triển khai', 'Đã hoàn tất'
   final int progressPercent;
   final DateTime createdAt;
   final String cancelReason;
   final String finalScore;
   final String teacherFeedback;
-
-  // Quản lý 4 mốc tiến độ (mỗi phần 25%)
-  // Cấu trúc dự kiến: { "milestone": 1, "fileUrl": "...", "score": 8.5, "comment": "...", "status": "Đã chấm" }
   final List<dynamic> milestones;
 
   GroupModel({
@@ -37,7 +34,6 @@ class GroupModel {
   });
 
   factory GroupModel.fromMap(Map<String, dynamic> map, String docId) {
-    // Xử lý lỗi Crash: Ép kiểu an toàn cho ngày tháng
     DateTime parsedDate = DateTime.now();
     if (map['createdAt'] is Timestamp) {
       parsedDate = (map['createdAt'] as Timestamp).toDate();

@@ -43,7 +43,10 @@ class _AdminManagementScreenState extends State<AdminManagementScreen> {
                       if (snapshot.hasError) {
                         return Text(
                           'Lỗi tải môn học: ${snapshot.error}',
-                          style: const TextStyle(color: Colors.red, fontSize: 12),
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 12,
+                          ),
                         );
                       }
                       if (!snapshot.hasData) {
@@ -70,13 +73,19 @@ class _AdminManagementScreenState extends State<AdminManagementScreen> {
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide.none,
                           ),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
                         ),
                         items: subjects
                             .map(
                               (s) => DropdownMenuItem(
                                 value: s.id,
-                                child: Text(s.name, overflow: TextOverflow.ellipsis),
+                                child: Text(
+                                  s.name,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                             )
                             .toList(),
@@ -97,7 +106,10 @@ class _AdminManagementScreenState extends State<AdminManagementScreen> {
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none,
                       ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 16,
+                      ),
                     ),
                   ),
                 ],
@@ -105,7 +117,13 @@ class _AdminManagementScreenState extends State<AdminManagementScreen> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Hủy', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
+                  child: const Text(
+                    'Hủy',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: () async {
@@ -140,7 +158,10 @@ class _AdminManagementScreenState extends State<AdminManagementScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text('Thêm', style: TextStyle(fontWeight: FontWeight.bold)),
+                  child: const Text(
+                    'Thêm',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
               ],
             );
@@ -172,18 +193,16 @@ class _AdminManagementScreenState extends State<AdminManagementScreen> {
               const SizedBox(height: 8),
               Text(
                 'Lựa chọn chức năng quản trị bên dưới để thiết lập hệ thống.',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey.shade600,
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
               ),
               const SizedBox(height: 32),
-              
+
               // Card: Tạo Tài Khoản
               _buildManagementCard(
                 context: context,
                 title: 'Tạo Tài Khoản',
-                description: 'Thêm tài khoản sinh viên hoặc giảng viên mới vào cơ sở dữ liệu hệ thống.',
+                description:
+                    'Thêm tài khoản sinh viên hoặc giảng viên mới vào cơ sở dữ liệu hệ thống.',
                 icon: Icons.person_add_alt_1_rounded,
                 startColor: const Color(0xFF8E2DE2),
                 endColor: const Color(0xFF4A00E0),
@@ -196,14 +215,15 @@ class _AdminManagementScreenState extends State<AdminManagementScreen> {
                   );
                 },
               ),
-              
+
               const SizedBox(height: 20),
-              
+
               // Card: Thêm Lớp Mới
               _buildManagementCard(
                 context: context,
                 title: 'Thêm Lớp Mới',
-                description: 'Tạo thêm lớp học phần mới trực thuộc các môn học sẵn có.',
+                description:
+                    'Tạo thêm lớp học phần mới trực thuộc các môn học sẵn có.',
                 icon: Icons.class_rounded,
                 startColor: const Color(0xFF00B4DB),
                 endColor: const Color(0xFF0083B0),
@@ -246,7 +266,6 @@ class _AdminManagementScreenState extends State<AdminManagementScreen> {
             padding: const EdgeInsets.all(24.0),
             child: Row(
               children: [
-                // Icon container with gradient
                 Container(
                   width: 60,
                   height: 60,
@@ -258,15 +277,10 @@ class _AdminManagementScreenState extends State<AdminManagementScreen> {
                     ),
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Icon(
-                    icon,
-                    color: Colors.white,
-                    size: 30,
-                  ),
+                  child: Icon(icon, color: Colors.white, size: 30),
                 ),
                 const SizedBox(width: 20),
-                
-                // Text content
+
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -291,8 +305,7 @@ class _AdminManagementScreenState extends State<AdminManagementScreen> {
                     ],
                   ),
                 ),
-                
-                // Chevron icon
+
                 Icon(
                   Icons.chevron_right_rounded,
                   color: Colors.grey.shade400,

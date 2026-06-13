@@ -84,7 +84,7 @@ class RegistrationSuccessScreen extends StatelessWidget {
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {
-                      // Quay về trang chủ (Index 0 của BottomNavigationBar)
+                      // Quay về trang chủ
                       Navigator.of(context).popUntil((route) => route.isFirst);
                     },
                     style: ElevatedButton.styleFrom(

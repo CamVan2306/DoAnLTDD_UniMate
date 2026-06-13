@@ -17,7 +17,6 @@ class LecturerProgressScreen extends StatefulWidget {
 class _TeacherProgressScreenState extends State<LecturerProgressScreen> {
   final String? lecturerUid = FirebaseAuth.instance.currentUser?.uid;
 
-  // FIX: Chỉ lưu groupId thay vì lưu cả Object GroupModel
   String? selectedGroupId;
 
   @override
@@ -53,13 +52,11 @@ class _TeacherProgressScreenState extends State<LecturerProgressScreen> {
               )
               .toList();
 
-          // FIX: Gán ID mặc định nếu chưa chọn, hoặc nếu ID đã chọn không còn tồn tại
           if (selectedGroupId == null ||
               !groups.any((g) => g.groupId == selectedGroupId)) {
             selectedGroupId = groups.first.groupId;
           }
 
-          // Tìm lại group dựa trên ID
           final currentGroup = groups.firstWhere(
             (g) => g.groupId == selectedGroupId,
           );
@@ -77,7 +74,6 @@ class _TeacherProgressScreenState extends State<LecturerProgressScreen> {
                     border: Border.all(color: Colors.blue.shade100),
                   ),
                   child: DropdownButton<String>(
-                    // FIX: Dropdown kiểu String
                     isExpanded: true,
                     value: selectedGroupId,
                     items: groups
@@ -179,12 +175,13 @@ class _TeacherProgressScreenState extends State<LecturerProgressScreen> {
                         children: [
                           Expanded(
                             child: ListView.builder(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
                               itemCount: currentGroup.milestones.length,
                               itemBuilder: (context, index) {
                                 final m = currentGroup.milestones[index];
 
-                                // FIX: Đảm bảo biến xử lý an toàn không bị dính null string "null"
                                 final comment = m['comment'] ?? '';
                                 final fileUrl = m['fileUrl'] ?? '';
 
@@ -197,30 +194,37 @@ class _TeacherProgressScreenState extends State<LecturerProgressScreen> {
                                   status: m['status'] ?? 'CHƯA NỘP',
                                   extraContent: Column(
                                     children: [
-                                        if (comment.toString().trim().isNotEmpty)
-                                          Text(
-                                            "Nhận xét: $comment",
-                                            style: const TextStyle(
-                                              fontStyle: FontStyle.italic,
-                                            ),
+                                      if (comment.toString().trim().isNotEmpty)
+                                        Text(
+                                          "Nhận xét: $comment",
+                                          style: const TextStyle(
+                                            fontStyle: FontStyle.italic,
                                           ),
-                                        if (m['score'] != null && m['score'] != 0.0)
-                                          Text(
-                                            "Điểm: ${m['score']}",
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.red,
-                                            ),
+                                        ),
+                                      if (m['score'] != null &&
+                                          m['score'] != 0.0)
+                                        Text(
+                                          "Điểm: ${m['score']}",
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.red,
                                           ),
+                                        ),
                                       const SizedBox(height: 10),
                                       Row(
                                         children: [
-                                          if (fileUrl.toString().trim().isNotEmpty)
+                                          if (fileUrl
+                                              .toString()
+                                              .trim()
+                                              .isNotEmpty)
                                             ElevatedButton.icon(
                                               onPressed: () => launchUrl(
                                                 Uri.parse(fileUrl.toString()),
                                               ),
-                                              icon: const Icon(Icons.link, size: 16),
+                                              icon: const Icon(
+                                                Icons.link,
+                                                size: 16,
+                                              ),
                                               label: const Text('Xem bài'),
                                             ),
                                           const SizedBox(width: 8),
@@ -236,7 +240,9 @@ class _TeacherProgressScreenState extends State<LecturerProgressScreen> {
                                               ),
                                               child: const Text(
                                                 'Chấm điểm',
-                                                style: TextStyle(color: Colors.white),
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                ),
                                               ),
                                             ),
                                         ],
@@ -253,38 +259,61 @@ class _TeacherProgressScreenState extends State<LecturerProgressScreen> {
                               width: double.infinity,
                               child: ElevatedButton(
                                 onPressed: () async {
-                                  bool confirm = await showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      title: const Text('Hoàn tất đồ án'),
-                                      content: const Text('Bạn có chắc chắn muốn đánh dấu đồ án này là đã hoàn tất?'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () => Navigator.pop(context, false),
-                                          child: const Text('Hủy'),
+                                  bool confirm =
+                                      await showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: const Text('Hoàn tất đồ án'),
+                                          content: const Text(
+                                            'Bạn có chắc chắn muốn đánh dấu đồ án này là đã hoàn tất?',
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context, false),
+                                              child: const Text('Hủy'),
+                                            ),
+                                            ElevatedButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context, true),
+                                              child: const Text('Xác nhận'),
+                                            ),
+                                          ],
                                         ),
-                                        ElevatedButton(
-                                          onPressed: () => Navigator.pop(context, true),
-                                          child: const Text('Xác nhận'),
-                                        ),
-                                      ],
-                                    ),
-                                  ) ?? false;
+                                      ) ??
+                                      false;
 
                                   if (confirm) {
-                                    bool success = await GroupService().completeProject(currentGroup.groupId, currentGroup.projectId);
+                                    bool success = await GroupService()
+                                        .completeProject(
+                                          currentGroup.groupId,
+                                          currentGroup.projectId,
+                                        );
                                     if (success && mounted) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(content: Text('Đã hoàn tất đồ án!'), backgroundColor: Colors.green),
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Đã hoàn tất đồ án!'),
+                                          backgroundColor: Colors.green,
+                                        ),
                                       );
                                     }
                                   }
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFF00346F),
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
                                 ),
-                                child: const Text('Hoàn tất đồ án', style: TextStyle(color: Colors.white, fontSize: 16)),
+                                child: const Text(
+                                  'Hoàn tất đồ án',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -298,7 +327,6 @@ class _TeacherProgressScreenState extends State<LecturerProgressScreen> {
     );
   }
 
-  // FIX: Thêm tham số currentGroup để cập nhật chính xác
   void _showGradeDialog(
     BuildContext context,
     int index,
@@ -306,9 +334,15 @@ class _TeacherProgressScreenState extends State<LecturerProgressScreen> {
   ) {
     final milestone = currentGroup.milestones[index];
     final currentScore = milestone['score'];
-    TextEditingController feedbackController = TextEditingController(text: milestone['comment']?.toString() ?? '');
-    TextEditingController scoreController = TextEditingController(text: currentScore != null && currentScore != 0.0 ? currentScore.toString() : '');
-    
+    TextEditingController feedbackController = TextEditingController(
+      text: milestone['comment']?.toString() ?? '',
+    );
+    TextEditingController scoreController = TextEditingController(
+      text: currentScore != null && currentScore != 0.0
+          ? currentScore.toString()
+          : '',
+    );
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -318,7 +352,9 @@ class _TeacherProgressScreenState extends State<LecturerProgressScreen> {
           children: [
             TextField(
               controller: scoreController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               decoration: const InputDecoration(
                 hintText: 'Nhập điểm số (vd: 8.5)...',
               ),
@@ -327,9 +363,7 @@ class _TeacherProgressScreenState extends State<LecturerProgressScreen> {
             TextField(
               controller: feedbackController,
               maxLines: 3,
-              decoration: const InputDecoration(
-                hintText: 'Nhập nhận xét...',
-              ),
+              decoration: const InputDecoration(hintText: 'Nhập nhận xét...'),
             ),
           ],
         ),
@@ -342,12 +376,22 @@ class _TeacherProgressScreenState extends State<LecturerProgressScreen> {
             onPressed: () async {
               final scoreStr = scoreController.text.trim();
               if (scoreStr.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Vui lòng nhập điểm!'), backgroundColor: Colors.red));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Vui lòng nhập điểm!'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
                 return;
               }
               final score = double.tryParse(scoreStr);
               if (score == null || score < 0 || score > 10) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Điểm phải là số từ 0 đến 10!'), backgroundColor: Colors.red));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Điểm phải là số từ 0-10!'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
                 return;
               }
 

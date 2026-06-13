@@ -9,7 +9,7 @@ import 'package:unimate_huit/models/classes_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LecturerCreateProjectScreen extends StatefulWidget {
-  final ProjectModel? projectToEdit; // null = tạo mới, non-null = chỉnh sửa
+  final ProjectModel? projectToEdit;
 
   const LecturerCreateProjectScreen({Key? key, this.projectToEdit})
     : super(key: key);
@@ -47,7 +47,6 @@ class _LecturerCreateProjectScreenState
       _selectedClassName = p.courseClass;
       _maxMembers = p.maxMembers;
       _projectType = p.projectType;
-      // Parse deadline
       try {
         _selectedDeadline = DateFormat('dd/MM/yyyy').parse(p.deadline);
       } catch (_) {}
@@ -101,14 +100,16 @@ class _LecturerCreateProjectScreenState
       if (isEditing) {
         lecturerNameToSave = widget.projectToEdit!.lecturerName;
       } else {
-        final userDoc = await FirebaseFirestore.instance.collection('users').doc(currentUid).get();
+        final userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(currentUid)
+            .get();
         if (userDoc.exists) {
           lecturerNameToSave = userDoc.data()?['name'] ?? '';
         }
       }
 
       if (isEditing) {
-        // Chế độ chỉnh sửa: chỉ update các trường cần thiết
         await ProjectService().updateProject(widget.projectToEdit!.projectId, {
           'title': _nameController.text.trim(),
           'lecturerName': lecturerNameToSave,
@@ -121,7 +122,6 @@ class _LecturerCreateProjectScreenState
           'courseClass': _selectedClassName!,
         });
       } else {
-        // Chế độ tạo mới
         final newProject = ProjectModel(
           projectId: '',
           title: _nameController.text.trim(),
@@ -197,7 +197,10 @@ class _LecturerCreateProjectScreenState
                     stream: SystemDataService().streamSubjects(),
                     builder: (context, snapshot) {
                       if (snapshot.hasError) {
-                        return Text('Lỗi: ${snapshot.error}', style: const TextStyle(color: Colors.red));
+                        return Text(
+                          'Lỗi: ${snapshot.error}',
+                          style: const TextStyle(color: Colors.red),
+                        );
                       }
                       if (!snapshot.hasData) {
                         return const Center(child: CircularProgressIndicator());
@@ -226,7 +229,6 @@ class _LecturerCreateProjectScreenState
                                 _selectedSubjectName = subjects
                                     .firstWhere((s) => s.id == val)
                                     .name;
-                                // Đặt lại lớp khi chọn môn mới
                                 _selectedClassId = null;
                                 _selectedClassName = null;
                               });
@@ -249,7 +251,10 @@ class _LecturerCreateProjectScreenState
                     ),
                     builder: (context, snapshot) {
                       if (snapshot.hasError) {
-                        return Text('Lỗi: ${snapshot.error}', style: const TextStyle(color: Colors.red));
+                        return Text(
+                          'Lỗi: ${snapshot.error}',
+                          style: const TextStyle(color: Colors.red),
+                        );
                       }
                       if (!snapshot.hasData) {
                         return Container(
@@ -306,7 +311,6 @@ class _LecturerCreateProjectScreenState
                   ),
                   const SizedBox(height: 16),
 
-                  // --- BỔ SUNG: RADIO HÌNH THỨC THỰC HIỆN ---
                   const Text(
                     'HÌNH THỨC THỰC HIỆN',
                     style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
@@ -327,8 +331,7 @@ class _LecturerCreateProjectScreenState
                             setState(() {
                               _projectType = val!;
                               if (_maxMembers < 2) {
-                                _maxMembers =
-                                    4; // Trả về mặc định 4 nếu chuyển từ Cá nhân sang
+                                _maxMembers = 4;
                               }
                             });
                           },

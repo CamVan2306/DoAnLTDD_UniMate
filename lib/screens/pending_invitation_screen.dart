@@ -59,10 +59,7 @@ class PendingInvitationsScreen extends StatelessWidget {
                           const SizedBox(height: 10),
                           const Text(
                             "Bạn hiện không có lời mời nào.",
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 15,
-                            ),
+                            style: TextStyle(color: Colors.grey, fontSize: 15),
                           ),
                         ],
                       ),
@@ -99,11 +96,15 @@ class PendingInvitationsScreen extends StatelessWidget {
       return const SizedBox.shrink();
     }
     return FutureBuilder<DocumentSnapshot>(
-      future: FirebaseFirestore.instance.collection('projects').doc(invitation.projectId).get(),
+      future: FirebaseFirestore.instance
+          .collection('projects')
+          .doc(invitation.projectId)
+          .get(),
       builder: (context, projectSnapshot) {
         if (!projectSnapshot.hasData) return const SizedBox.shrink();
-        
-        final projectData = projectSnapshot.data!.data() as Map<String, dynamic>?;
+
+        final projectData =
+            projectSnapshot.data!.data() as Map<String, dynamic>?;
         if (projectData == null) return const SizedBox.shrink();
 
         final courseClass = projectData['courseClass'] ?? '';
@@ -112,11 +113,16 @@ class PendingInvitationsScreen extends StatelessWidget {
         final maxMembers = projectData['maxMembers'] ?? 0;
 
         return FutureBuilder<DocumentSnapshot>(
-          future: FirebaseFirestore.instance.collection('users').doc(invitation.inviterUid).get(),
+          future: FirebaseFirestore.instance
+              .collection('users')
+              .doc(invitation.inviterUid)
+              .get(),
           builder: (context, userSnapshot) {
-            String inviterName = 'Một ai đó';
+            String inviterName = 'Nhóm trưởng';
             if (userSnapshot.hasData && userSnapshot.data!.data() != null) {
-              inviterName = (userSnapshot.data!.data() as Map<String, dynamic>)['name'] ?? inviterName;
+              inviterName =
+                  (userSnapshot.data!.data() as Map<String, dynamic>)['name'] ??
+                  inviterName;
             }
 
             return Container(
@@ -192,9 +198,18 @@ class PendingInvitationsScreen extends StatelessWidget {
                         const SizedBox(height: 6),
                         _buildDetailRow(Icons.class_, "Lớp", courseClass),
                         const SizedBox(height: 6),
-                        _buildDetailRow(Icons.person, "Được mời bởi", inviterName),
+                        _buildDetailRow(
+                          Icons.person,
+                          "Được mời bởi",
+                          inviterName,
+                        ),
                         const SizedBox(height: 6),
-                        _buildDetailRow(Icons.group, "Thành viên", "$currentMembers/$maxMembers", isHighlight: true),
+                        _buildDetailRow(
+                          Icons.group,
+                          "Thành viên",
+                          "$currentMembers/$maxMembers",
+                          isHighlight: true,
+                        ),
                       ],
                     ),
                   ),
@@ -207,8 +222,11 @@ class PendingInvitationsScreen extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.info_outline,
-                            size: 16, color: Colors.blue.shade700),
+                        Icon(
+                          Icons.info_outline,
+                          size: 16,
+                          color: Colors.blue.shade700,
+                        ),
                         const SizedBox(width: 8),
                         const Expanded(
                           child: Text(
@@ -225,16 +243,21 @@ class PendingInvitationsScreen extends StatelessWidget {
                       Expanded(
                         child: OutlinedButton(
                           onPressed: () async {
-                            final ok = await InvitationService().declineInvitation(
-                              invitationId: invitation.invitationId,
-                            );
+                            final ok = await InvitationService()
+                                .declineInvitation(
+                                  invitationId: invitation.invitationId,
+                                );
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
-                                    ok ? 'Đã từ chối lời mời.' : 'Có lỗi xảy ra!',
+                                    ok
+                                        ? 'Đã từ chối lời mời.'
+                                        : 'Có lỗi xảy ra!',
                                   ),
-                                  backgroundColor: ok ? Colors.orange : Colors.red,
+                                  backgroundColor: ok
+                                      ? Colors.orange
+                                      : Colors.red,
                                 ),
                               );
                             }
@@ -259,7 +282,7 @@ class PendingInvitationsScreen extends StatelessWidget {
                               groupId: invitation.groupId,
                               projectId: invitation.projectId,
                               myUid: myUid,
-                              maxMembers: maxMembers, // Truyền đúng maxMembers
+                              maxMembers: maxMembers,
                             );
                           },
                           style: ElevatedButton.styleFrom(
@@ -277,23 +300,25 @@ class PendingInvitationsScreen extends StatelessWidget {
                 ],
               ),
             );
-          }
+          },
         );
-      }
+      },
     );
   }
 
-  Widget _buildDetailRow(IconData icon, String label, String value, {bool isHighlight = false}) {
+  Widget _buildDetailRow(
+    IconData icon,
+    String label,
+    String value, {
+    bool isHighlight = false,
+  }) {
     return Row(
       children: [
         Icon(icon, size: 14, color: Colors.grey.shade600),
         const SizedBox(width: 6),
         Text(
           "$label:",
-          style: TextStyle(
-            fontSize: 13,
-            color: Colors.grey.shade600,
-          ),
+          style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
         ),
         const SizedBox(width: 6),
         Expanded(

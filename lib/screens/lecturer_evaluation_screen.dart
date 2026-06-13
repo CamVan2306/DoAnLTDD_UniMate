@@ -28,7 +28,7 @@ class _TeacherEvaluationScreenState extends State<TeacherEvaluationScreen> {
   Future<void> _fetchTeacherGroups() async {
     String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
     try {
-      // Lấy các nhóm do giảng viên này hướng dẫn (cần có field lecturerUid trong collection groups)
+      // Lấy các nhóm do giảng viên này hướng dẫn
       var groupsSnap = await FirebaseFirestore.instance
           .collection('groups')
           .where('lecturerUid', isEqualTo: uid)
@@ -52,12 +52,24 @@ class _TeacherEvaluationScreenState extends State<TeacherEvaluationScreen> {
 
     final scoreStr = _scoreController.text.trim();
     if (scoreStr.isEmpty) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Vui lòng nhập điểm số!'), backgroundColor: Colors.red));
+      if (mounted)
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Vui lòng nhập điểm số!'),
+            backgroundColor: Colors.red,
+          ),
+        );
       return;
     }
     final score = double.tryParse(scoreStr);
     if (score == null || score < 0 || score > 10) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Điểm phải là số từ 0 đến 10!'), backgroundColor: Colors.red));
+      if (mounted)
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Điểm phải là số từ 0 đến 10!'),
+            backgroundColor: Colors.red,
+          ),
+        );
       return;
     }
 

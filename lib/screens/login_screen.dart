@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // BỔ SUNG: Dùng để lưu MSSV
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unimate_huit/main_navigation_screen.dart';
 import '../services/auth_service.dart';
-import 'forgot_password_screen.dart'; // BỔ SUNG: Import màn hình Quên mật khẩu
+import 'forgot_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -27,7 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    _loadSavedCredentials(); // BỔ SUNG: Tự động load MSSV nếu trước đó đã chọn "Nhớ mật khẩu"
+    _loadSavedCredentials();
   }
 
   // --- HÀM LOAD MSSV ĐÃ LƯU ---
@@ -83,13 +83,11 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // Logic email đuôi HUIT
       final String email = mssv.contains('@') ? mssv : '$mssv@huit.edu.vn';
 
       final userCredential = await AuthService().login(email, password);
 
       if (userCredential != null) {
-        // BỔ SUNG: Xử lý lưu/xóa MSSV tùy vào checkbox
         final prefs = await SharedPreferences.getInstance();
         if (_rememberMe) {
           await prefs.setString('saved_mssv', mssv);
@@ -102,7 +100,6 @@ class _LoginScreenState extends State<LoginScreen> {
         );
 
         if (mounted) {
-          // FIX: Chuyển hướng về MainNavigationScreen thay vì MainScreen
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -159,9 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     borderRadius: BorderRadius.circular(30),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(
-                          0.05,
-                        ), // Tạm dùng withOpacity nếu withValues báo lỗi SDK cũ
+                        color: Colors.black.withOpacity(0.05),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),
@@ -260,7 +255,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               letterSpacing: 1.0,
                             ),
                           ),
-                          // BỔ SUNG: Bọc Nút Quên Mật Khẩu để điều hướng
                           GestureDetector(
                             onTap: () {
                               Navigator.push(

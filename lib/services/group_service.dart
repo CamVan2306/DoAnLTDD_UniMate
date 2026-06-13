@@ -16,7 +16,6 @@ class GroupService {
         );
   }
 
-  // [SINH VIÊN] Đăng ký đề tài → Khóa đồ án (Giai đoạn 1: Đang gom nhóm)
   Future<bool> createGroupAndLockProject(
     GroupModel newGroup,
     String projectId, {
@@ -24,8 +23,9 @@ class GroupService {
   }) async {
     try {
       WriteBatch batch = _db.batch();
-      DocumentReference groupRef =
-          _db.collection('groups').doc(newGroup.groupId);
+      DocumentReference groupRef = _db
+          .collection('groups')
+          .doc(newGroup.groupId);
 
       // Khởi tạo 4 mốc tiến độ rỗng cho nhóm mới
       List<Map<String, dynamic>> initialMilestones = List.generate(
@@ -44,15 +44,13 @@ class GroupService {
       Map<String, dynamic> groupData = newGroup.toMap();
       groupData['milestones'] = initialMilestones;
       String initialStatus = isIndividual ? 'Chờ GV duyệt' : 'Đang gom nhóm';
-      groupData['status'] = initialStatus; // Override status từ model
+      groupData['status'] = initialStatus;
       batch.set(groupRef, groupData);
 
-      // Cập nhật trạng thái Đồ án (Khóa tạm thời)
-      DocumentReference projectRef =
-          _db.collection('projects').doc(projectId);
+      DocumentReference projectRef = _db.collection('projects').doc(projectId);
       batch.update(projectRef, {
         'status': initialStatus,
-        'registeredGroupId': groupRef.id, // Gắn cờ khóa độc quyền
+        'registeredGroupId': groupRef.id,
         'currentMembers': 1, // Trưởng nhóm là người đầu tiên
       });
 
@@ -63,7 +61,7 @@ class GroupService {
     }
   }
 
-  // [NHÓM TRƯỞNG] Chốt danh sách → Nộp lên Giảng viên duyệt (Giai đoạn 2)
+  // [NHÓM TRƯỞNG] Chốt danh sách → Nộp lên Giảng viên duyệt
   Future<bool> submitGroupToLecturer({
     required String groupId,
     required String projectId,
@@ -71,8 +69,7 @@ class GroupService {
     try {
       WriteBatch batch = _db.batch();
       DocumentReference groupRef = _db.collection('groups').doc(groupId);
-      DocumentReference projectRef =
-          _db.collection('projects').doc(projectId);
+      DocumentReference projectRef = _db.collection('projects').doc(projectId);
 
       batch.update(groupRef, {'status': 'Chờ GV duyệt'});
       batch.update(projectRef, {'status': 'Chờ GV duyệt'});
@@ -94,8 +91,7 @@ class GroupService {
       batch.delete(groupRef);
 
       // Trả đồ án về trạng thái Trống
-      DocumentReference projectRef =
-          _db.collection('projects').doc(projectId);
+      DocumentReference projectRef = _db.collection('projects').doc(projectId);
       batch.update(projectRef, {
         'status': 'Trống',
         'registeredGroupId': '',
@@ -119,8 +115,7 @@ class GroupService {
     try {
       WriteBatch batch = _db.batch();
       DocumentReference groupRef = _db.collection('groups').doc(groupId);
-      DocumentReference projectRef =
-          _db.collection('projects').doc(projectId);
+      DocumentReference projectRef = _db.collection('projects').doc(projectId);
 
       if (status == 'Đã duyệt') {
         batch.update(groupRef, {'status': 'Đang triển khai'});
@@ -169,13 +164,8 @@ class GroupService {
       DocumentReference groupRef = _db.collection('groups').doc(groupId);
       DocumentReference projectRef = _db.collection('projects').doc(projectId);
 
-      batch.update(groupRef, {
-        'status': 'Đã hoàn tất',
-        'progressPercent': 100,
-      });
-      batch.update(projectRef, {
-        'status': 'Đã hoàn tất',
-      });
+      batch.update(groupRef, {'status': 'Đã hoàn tất', 'progressPercent': 100});
+      batch.update(projectRef, {'status': 'Đã hoàn tất'});
 
       await batch.commit();
       return true;

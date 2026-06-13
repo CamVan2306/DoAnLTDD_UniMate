@@ -5,8 +5,8 @@ import '../services/invitation_service.dart';
 class InviteMemberBottomSheet extends StatefulWidget {
   final String groupId;
   final String groupName;
-  final String projectId;   // THÊM MỚI
-  final String projectName; // THÊM MỚI
+  final String projectId;
+  final String projectName;
   final String currentUid;
 
   const InviteMemberBottomSheet({
@@ -18,7 +18,6 @@ class InviteMemberBottomSheet extends StatefulWidget {
     required this.currentUid,
   });
 
-  // Gọi hàm tĩnh này để hiển thị khung trượt
   static void show(
     BuildContext context, {
     required String groupId,
@@ -95,8 +94,8 @@ class _InviteMemberBottomSheetState extends State<InviteMemberBottomSheet> {
     bool success = await InvitationService().sendInvitation(
       groupId: widget.groupId,
       groupName: widget.groupName,
-      projectId: widget.projectId,     // ✅ Truyền đúng projectId
-      projectName: widget.projectName, // ✅ Truyền tên đề tài
+      projectId: widget.projectId,
+      projectName: widget.projectName,
       inviterUid: widget.currentUid,
       inviteeUid: _foundUser!.uid,
     );
@@ -111,7 +110,7 @@ class _InviteMemberBottomSheetState extends State<InviteMemberBottomSheet> {
             backgroundColor: Colors.green,
           ),
         );
-        Navigator.pop(context); // Tắt bottom sheet sau khi mời xong
+        Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -131,7 +130,6 @@ class _InviteMemberBottomSheetState extends State<InviteMemberBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    // Lấy padding đáy màn hình (để xử lý việc bàn phím ảo che khuất)
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
     return Container(
@@ -204,7 +202,6 @@ class _InviteMemberBottomSheetState extends State<InviteMemberBottomSheet> {
           ),
           const SizedBox(height: 20),
 
-          // Hiển thị kết quả tìm kiếm
           if (_errorMessage.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
@@ -242,9 +239,13 @@ class _InviteMemberBottomSheetState extends State<InviteMemberBottomSheet> {
                 ),
                 subtitle: Text(_foundUser!.code),
                 trailing: ElevatedButton(
-                  onPressed: (_isInviting || _inviteStatus != null) ? null : _sendInvite,
+                  onPressed: (_isInviting || _inviteStatus != null)
+                      ? null
+                      : _sendInvite,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _inviteStatus != null ? Colors.grey : Colors.green,
+                    backgroundColor: _inviteStatus != null
+                        ? Colors.grey
+                        : Colors.green,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -259,11 +260,13 @@ class _InviteMemberBottomSheetState extends State<InviteMemberBottomSheet> {
                             strokeWidth: 2,
                           ),
                         )
-                      : Text(_inviteStatus == 'already_invited'
-                          ? 'Đã được mời'
-                          : _inviteStatus == 'already_in_group'
+                      : Text(
+                          _inviteStatus == 'already_invited'
+                              ? 'Đã được mời'
+                              : _inviteStatus == 'already_in_group'
                               ? 'Đã tham gia'
-                              : 'Mời'),
+                              : 'Mời',
+                        ),
                 ),
               ),
             ),

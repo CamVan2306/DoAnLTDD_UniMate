@@ -7,7 +7,8 @@ class ProjectModel {
   final int currentMembers;
   final String deadline;
   final String requirements;
-  final String status; // Trạng thái: 'Trống', 'Chờ duyệt', 'Đã duyệt'
+  final String
+  status; // Trạng thái: 'Trống', 'Đang gom nhóm','Chờ duyệt', 'Đã duyệt'
   final String subjectName;
   final String courseClass;
   final String projectType; // 'Nhóm' hoặc 'Cá nhân'

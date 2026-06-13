@@ -10,12 +10,10 @@ class InvitationService {
       QuerySnapshot query = await _db
           .collection('users')
           .where('code', isEqualTo: mssv.trim())
-          // Bỏ where('role') để tránh lỗi thiếu Composite Index trên Firestore
           .get();
 
       if (query.docs.isNotEmpty) {
         var userData = query.docs.first.data() as Map<String, dynamic>;
-        // Kiểm tra role ở local thay vì trên query
         if (userData['role'] == 'student') {
           userData['uid'] = query.docs.first.id;
           return userData;
@@ -63,8 +61,8 @@ class InvitationService {
   Future<bool> sendInvitation({
     required String groupId,
     required String groupName,
-    required String projectId, // THÊM MỚI
-    required String projectName, // THÊM MỚI
+    required String projectId,
+    required String projectName,
     required String inviterUid,
     required String inviteeUid,
   }) async {
@@ -85,20 +83,21 @@ class InvitationService {
     }
   }
 
-  // Đồng ý tham gia nhóm (Batch update vào Group và Project)
+  // Đồng ý tham gia nhóm
   Future<bool> acceptInvitation({
     required String invitationId,
     required String groupId,
     required String projectId,
     required String myUid,
-    required int maxMembers, // THÊM MỚI: cần để kiểm tra tự động chuyển trạng thái
+    required int maxMembers,
   }) async {
     try {
       WriteBatch batch = _db.batch();
 
       // 1. Giấy mời thành 'accepted'
-      DocumentReference invRef =
-          _db.collection('invitations').doc(invitationId);
+      DocumentReference invRef = _db
+          .collection('invitations')
+          .doc(invitationId);
       batch.update(invRef, {'status': 'accepted'});
 
       // 2. Thêm vào mảng memberUids

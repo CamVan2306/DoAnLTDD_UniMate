@@ -44,15 +44,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               showRetry: false,
             )
           : StreamBuilder<UserModel>(
-              // Dùng streamUser gốc — không cần thay đổi UserService
               stream: UserService().streamUser(currentUid),
               builder: (context, snapshot) {
-                // 1. Đang tải
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                // 2. Có lỗi (gồm cả Exception "Không tìm thấy dữ liệu")
                 if (snapshot.hasError) {
                   final err = snapshot.error.toString();
                   final bool isNotFound =
@@ -71,12 +68,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   );
                 }
 
-                // 3. Chưa có data
                 if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                // 4. Có dữ liệu
                 final UserModel user = snapshot.data!;
                 final bool isStudent = user.role == 'student';
 
@@ -94,10 +89,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             CircleAvatar(
                               radius: 50,
                               backgroundColor: Colors.white,
-                              child: user.photoUrl != null && user.photoUrl!.isNotEmpty
+                              child:
+                                  user.photoUrl != null &&
+                                      user.photoUrl!.isNotEmpty
                                   ? CircleAvatar(
                                       radius: 46,
-                                      backgroundImage: NetworkImage(user.photoUrl!),
+                                      backgroundImage: NetworkImage(
+                                        user.photoUrl!,
+                                      ),
                                       backgroundColor: const Color(0xFFF0F4F8),
                                     )
                                   : CircleAvatar(
@@ -160,7 +159,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         const SizedBox(height: 12),
 
-                        // VAI TRÒ (Đã xóa box trống màu xanh theo yêu cầu)
+                        // VAI TRÒ
                         const SizedBox(height: 10),
 
                         // --- 2. LIÊN HỆ ---
@@ -241,7 +240,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 Icons.chevron_right,
                                 color: Colors.grey,
                               ),
-                              onTap: () => _showNotificationSettingsDialog(context),
+                              onTap: () =>
+                                  _showNotificationSettingsDialog(context),
                             ),
                           ],
                         ),
@@ -321,7 +321,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // --- WIDGET LỖI CHUNG ---
   Widget _buildErrorUI(
     BuildContext context, {
     required IconData icon,
@@ -492,50 +491,78 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: const Text('Hủy'),
               ),
               ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF00346F)),
-                onPressed: isSubmitting ? null : () async {
-                  if (oldPasswordController.text.trim().isEmpty || newPasswordController.text.trim().isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Vui lòng nhập đầy đủ thông tin!'), backgroundColor: Colors.red),
-                    );
-                    return;
-                  }
-                  
-                  setState(() => isSubmitting = true);
-                  try {
-                    final user = FirebaseAuth.instance.currentUser;
-                    if (user != null && user.email != null) {
-                      // Xác thực lại trước khi đổi mật khẩu
-                      final cred = EmailAuthProvider.credential(
-                        email: user.email!,
-                        password: oldPasswordController.text.trim(),
-                      );
-                      await user.reauthenticateWithCredential(cred);
-                      await user.updatePassword(newPasswordController.text.trim());
-                      
-                      if (ctx.mounted) {
-                        Navigator.pop(ctx);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Đổi mật khẩu thành công!'), backgroundColor: Colors.green),
-                        );
-                      }
-                    }
-                  } catch (e) {
-                    setState(() => isSubmitting = false);
-                    if (ctx.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Lỗi: Mật khẩu cũ không đúng hoặc có sự cố xảy ra!'), backgroundColor: Colors.red),
-                      );
-                    }
-                  }
-                },
-                child: isSubmitting 
-                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                  : const Text('Cập nhật', style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF00346F),
+                ),
+                onPressed: isSubmitting
+                    ? null
+                    : () async {
+                        if (oldPasswordController.text.trim().isEmpty ||
+                            newPasswordController.text.trim().isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Vui lòng nhập đầy đủ thông tin!'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+
+                        setState(() => isSubmitting = true);
+                        try {
+                          final user = FirebaseAuth.instance.currentUser;
+                          if (user != null && user.email != null) {
+                            // Xác thực lại trước khi đổi mật khẩu
+                            final cred = EmailAuthProvider.credential(
+                              email: user.email!,
+                              password: oldPasswordController.text.trim(),
+                            );
+                            await user.reauthenticateWithCredential(cred);
+                            await user.updatePassword(
+                              newPasswordController.text.trim(),
+                            );
+
+                            if (ctx.mounted) {
+                              Navigator.pop(ctx);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Đổi mật khẩu thành công!'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            }
+                          }
+                        } catch (e) {
+                          setState(() => isSubmitting = false);
+                          if (ctx.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Lỗi: Mật khẩu cũ không đúng hoặc có sự cố xảy ra!',
+                                ),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        }
+                      },
+                child: isSubmitting
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Text(
+                        'Cập nhật',
+                        style: TextStyle(color: Colors.white),
+                      ),
               ),
             ],
           );
-        }
+        },
       ),
     );
   }
@@ -573,23 +600,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: const Text('Đóng'),
               ),
               ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF00346F)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF00346F),
+                ),
                 onPressed: () {
                   Navigator.pop(ctx);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Đã lưu cài đặt thông báo!'), backgroundColor: Colors.green),
+                    const SnackBar(
+                      content: Text('Đã lưu cài đặt thông báo!'),
+                      backgroundColor: Colors.green,
+                    ),
                   );
                 },
                 child: const Text('Lưu', style: TextStyle(color: Colors.white)),
               ),
             ],
           );
-        }
+        },
       ),
     );
   }
 
-  /// Tạo chữ viết tắt từ tên
   String _getInitials(String name) {
     final parts = name.trim().split(' ');
     if (parts.length >= 2) {
@@ -601,7 +632,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _pickAndUploadAvatar(BuildContext context) async {
-    // Bottom sheet chọn nguồn ảnh
     final source = await showModalBottomSheet<ImageSource>(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -628,14 +658,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 16),
               ListTile(
-                leading: const Icon(Icons.photo_library_outlined, color: Color(0xFF00346F)),
+                leading: const Icon(
+                  Icons.photo_library_outlined,
+                  color: Color(0xFF00346F),
+                ),
                 title: const Text('Chọn từ Thư viện'),
                 onTap: () => Navigator.pop(ctx, ImageSource.gallery),
-              ),
-              ListTile(
-                leading: const Icon(Icons.camera_alt_outlined, color: Color(0xFF00346F)),
-                title: const Text('Chụp ảnh mới'),
-                onTap: () => Navigator.pop(ctx, ImageSource.camera),
               ),
             ],
           ),
@@ -666,7 +694,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               SizedBox(
                 width: 18,
                 height: 18,
-                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
               ),
               SizedBox(width: 12),
               Text('Đang tải ảnh lên...'),
@@ -690,10 +721,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       await user.updatePhotoURL(downloadUrl);
 
       // 3. Lưu vào Firestore → AppBar và Profile tự refresh qua stream
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .update({'photoUrl': downloadUrl});
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).update(
+        {'photoUrl': downloadUrl},
+      );
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).clearSnackBars();
@@ -717,4 +747,3 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 }
-

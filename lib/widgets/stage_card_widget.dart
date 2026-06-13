@@ -16,7 +16,6 @@ class StageCardWidget extends StatelessWidget {
     this.extraContent,
   }) : super(key: key);
 
-  // FIX: Cập nhật màu sắc khớp với 3 trạng thái của mốc báo cáo
   Color _getStatusColor() {
     String upperStatus = status.toUpperCase();
     switch (upperStatus) {
@@ -30,7 +29,6 @@ class StageCardWidget extends StatelessWidget {
     }
   }
 
-  // Tùy chỉnh màu chữ để tương phản tốt hơn với nền
   Color _getStatusTextColor() {
     String upperStatus = status.toUpperCase();
     switch (upperStatus) {
@@ -76,7 +74,7 @@ class StageCardWidget extends StatelessWidget {
               ),
               Chip(
                 label: Text(
-                  status.toUpperCase(), // Ép kiểu in hoa cho đồng bộ UI
+                  status.toUpperCase(),
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,

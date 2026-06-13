@@ -38,8 +38,6 @@ class _AdminGroupManagementScreenState
       appBar: const UniMateAppBar(),
       body: Column(
         children: [
-
-          // Row chứa các bộ lọc (Môn, Lớp, Trạng thái)
           Container(
             color: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -354,25 +352,36 @@ class _AdminGroupManagementScreenState
                                     Expanded(
                                       child: ElevatedButton(
                                         onPressed: () async {
-                                          final project = await ProjectService().getProjectById(projectId);
-                                          if (project != null && context.mounted) {
+                                          final project = await ProjectService()
+                                              .getProjectById(projectId);
+                                          if (project != null &&
+                                              context.mounted) {
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                builder: (context) => ProjectDetailScreen(project: project),
+                                                builder: (context) =>
+                                                    ProjectDetailScreen(
+                                                      project: project,
+                                                    ),
                                               ),
                                             );
                                           } else if (context.mounted) {
-                                            ScaffoldMessenger.of(context).showSnackBar(
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
                                               const SnackBar(
-                                                content: Text('Không tìm thấy thông tin đề tài.'),
+                                                content: Text(
+                                                  'Không tìm thấy thông tin đề tài.',
+                                                ),
                                                 backgroundColor: Colors.red,
                                               ),
                                             );
                                           }
                                         },
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color(0xFF00346F),
+                                          backgroundColor: const Color(
+                                            0xFF00346F,
+                                          ),
                                           foregroundColor: Colors.white,
                                         ),
                                         child: const Text('Chi tiết đề tài'),
@@ -527,5 +536,4 @@ class _AdminGroupManagementScreenState
       ),
     );
   }
-
 }

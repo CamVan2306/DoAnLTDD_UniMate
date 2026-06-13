@@ -24,7 +24,6 @@ class SystemDataService {
   }
 
   // --- CLASSES: Lọc theo subjectId ---
-  // Lấy tất cả và lọc ở client để hỗ trợ cả định dạng String và Array trên Firestore
   Stream<List<CourseClassModel>> streamClassesBySubject(String subjectId) {
     return _db.collection('classes').snapshots().map((snapshot) {
       return snapshot.docs
@@ -40,7 +39,10 @@ class SystemDataService {
   }
 
   // [ADMIN] Thêm Lớp học phần mới
-  Future<void> addClass({required String name, required String subjectId}) async {
+  Future<void> addClass({
+    required String name,
+    required String subjectId,
+  }) async {
     // 1. Kiểm tra xem tên lớp đã tồn tại chưa
     final querySnapshot = await _db
         .collection('classes')
@@ -52,7 +54,7 @@ class SystemDataService {
       // Đã tồn tại -> Cập nhật thêm môn học vào lớp này
       final docId = querySnapshot.docs.first.id;
       final data = querySnapshot.docs.first.data();
-      
+
       List<String> currentSubjectIds = [];
       if (data['subjectId'] is List) {
         currentSubjectIds = List<String>.from(data['subjectId']);
@@ -71,7 +73,7 @@ class SystemDataService {
       // Chưa tồn tại -> Tạo mới hoàn toàn
       await _db.collection('classes').add({
         'name': name,
-        'subjectId': [subjectId], // Lưu là array
+        'subjectId': [subjectId],
       });
     }
   }

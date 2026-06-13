@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/user_model.dart';
 import '../models/project_model.dart';
-import '../models/group_model.dart'; // BỔ SUNG: Import GroupModel
+import '../models/group_model.dart';
 import '../services/invitation_service.dart';
 import '../services/group_service.dart';
 import '../services/user_service.dart';
@@ -86,7 +86,6 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       return;
     }
 
-    // Đóng bàn phím khi bấm tìm kiếm
     FocusManager.instance.primaryFocus?.unfocus();
 
     final studentData = await InvitationService().findStudentByMSSV(mssv);
@@ -122,13 +121,12 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     if (_isSubmitting) return;
     setState(() => _isSubmitting = true);
 
-    // FIX: 1. Tự sinh ID nhóm trước khi đẩy lên Firebase
+    //Tự sinh ID nhóm trước khi đẩy lên Firebase
     final String newGroupId = FirebaseFirestore.instance
         .collection('groups')
         .doc()
         .id;
 
-    // FIX: 2. Dùng GroupModel thay vì Map để khớp với Service
     final GroupModel newGroup = GroupModel(
       groupId: newGroupId,
       groupName: groupName,
@@ -136,16 +134,12 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       projectName: widget.project.title,
       lecturerUid: widget.project.lecturerUid,
       leaderUid: myUid,
-      memberUids: [
-        myUid,
-      ], // Khi mới tạo, Database chỉ có Trưởng nhóm. Các bạn khác phải bấm Đồng ý mới vào mảng này.
+      memberUids: [myUid],
       status: 'Chờ duyệt',
       progressPercent: 0,
       createdAt: DateTime.now(),
-      // Milestones sẽ được Service tự động sinh
     );
 
-    // Gọi hàm Service (trả về bool)
     final bool isSuccess = await GroupService().createGroupAndLockProject(
       newGroup,
       widget.project.projectId,
@@ -153,13 +147,13 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     );
 
     if (isSuccess) {
-      // 3. Gửi lời mời cho các thành viên đã thêm (bỏ qua index 0 là trưởng nhóm)
+      // Gửi lời mời cho các thành viên đã thêm
       for (int i = 1; i < addedMembers.length; i++) {
         await InvitationService().sendInvitation(
           groupId: newGroupId,
           groupName: groupName,
-          projectId: widget.project.projectId, // ✅ Truyền đúng projectId
-          projectName: widget.project.title,   // ✅ Truyền tên đề tài
+          projectId: widget.project.projectId,
+          projectName: widget.project.title,
           inviterUid: myUid,
           inviteeUid: addedMembers[i].uid,
         );
@@ -270,7 +264,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                 controller: _groupNameController,
                 textInputAction: TextInputAction.done,
                 decoration: InputDecoration(
-                  labelText: isIndividual ? 'TÊN ĐẠI DIỆN' : 'TÊN NHÓM DỰ KIẾN',
+                  labelText: isIndividual ? 'TÊN ĐẠI DIỆN' : 'TÊN NHÓM',
                   labelStyle: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.grey,

@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import '../services/invitation_service.dart';
-import '../screens/registration_success_screen.dart'; // Import màn hình chúc mừng
+import '../screens/registration_success_screen.dart';
 
-// BỔ SUNG: Thêm tham số projectId để cập nhật sỉ số (currentMembers) trên Firebase
 void showAcceptInvitationDialog({
   required BuildContext context,
   required String invitationId,
   required String groupId,
   required String projectId,
   required String myUid,
-  int maxMembers = 0, // THÊM MỚI: để auto-submit khi đủ người
+  int maxMembers = 0,
 }) {
   showDialog(
     context: context,
@@ -100,7 +99,7 @@ void showAcceptInvitationDialog({
                       groupId: groupId,
                       projectId: projectId,
                       myUid: myUid,
-                      maxMembers: maxMembers, // TRUYỀN VÀO để tự động chuyển trạng thái
+                      maxMembers: maxMembers,
                     );
 
                     // Nếu thành công, chuyển hướng sang trang chúc mừng

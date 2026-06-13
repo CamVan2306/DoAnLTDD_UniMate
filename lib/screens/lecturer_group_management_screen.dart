@@ -125,7 +125,8 @@ class _LecturerGroupManagementScreenState
               "Đề tài: ${group.projectName}",
               style: const TextStyle(color: Colors.grey),
             ),
-            if (group.status == 'Đã hoàn tất' && group.finalScore.isNotEmpty) ...[
+            if (group.status == 'Đã hoàn tất' &&
+                group.finalScore.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(
                 "Điểm tổng kết: ${group.finalScore}",
@@ -138,12 +139,15 @@ class _LecturerGroupManagementScreenState
             const SizedBox(height: 12),
             OutlinedButton.icon(
               onPressed: () async {
-                final project = await ProjectService().getProjectById(group.projectId);
+                final project = await ProjectService().getProjectById(
+                  group.projectId,
+                );
                 if (project != null && context.mounted) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProjectDetailScreen(project: project),
+                      builder: (context) =>
+                          ProjectDetailScreen(project: project),
                     ),
                   );
                 } else if (context.mounted) {
@@ -167,7 +171,6 @@ class _LecturerGroupManagementScreenState
             ),
             const SizedBox(height: 12),
 
-            // Hiển thị nút hành động nếu là tab "Chờ GV duyệt"
             if (group.status == 'Chờ GV duyệt')
               Row(
                 children: [

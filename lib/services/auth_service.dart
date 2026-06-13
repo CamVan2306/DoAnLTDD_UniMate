@@ -43,7 +43,7 @@ class AuthService {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         return data['role'] ?? 'student';
       }
-      return 'student'; // Mặc định an toàn
+      return 'student';
     } catch (e) {
       debugPrint("Lỗi khi lấy thông tin quyền: $e");
       return 'student';

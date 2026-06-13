@@ -23,9 +23,7 @@ class UniMateAppBar extends StatelessWidget implements PreferredSizeWidget {
           : Padding(
               padding: const EdgeInsets.all(8.0),
               child: GestureDetector(
-                onTap: () {
-                  // Logic đổi avatar sau này
-                },
+                onTap: () {},
                 child: uid == null
                     ? const CircleAvatar(
                         backgroundColor: Color(0xFF00346F),
@@ -47,8 +45,8 @@ class UniMateAppBar extends StatelessWidget implements PreferredSizeWidget {
                             final name = (data?['name'] ?? '') as String;
                             final parts = name.trim().split(' ');
                             if (parts.length >= 2) {
-                              initials =
-                                  '${parts.first[0]}${parts.last[0]}'.toUpperCase();
+                              initials = '${parts.first[0]}${parts.last[0]}'
+                                  .toUpperCase();
                             } else if (parts.isNotEmpty &&
                                 parts.first.isNotEmpty) {
                               initials = parts.first[0].toUpperCase();
@@ -95,7 +93,6 @@ class UniMateAppBar extends StatelessWidget implements PreferredSizeWidget {
       Size.fromHeight(kToolbarHeight + (bottom?.preferredSize.height ?? 0.0));
 }
 
-// Widget badge chuông tự chứa stream riêng
 class _NotificationBell extends StatelessWidget {
   final String? uid;
   const _NotificationBell({this.uid});
@@ -104,12 +101,14 @@ class _NotificationBell extends StatelessWidget {
   Widget build(BuildContext context) {
     if (uid == null) {
       return IconButton(
-        icon: const Icon(Icons.notifications_none_outlined, color: Colors.black87),
+        icon: const Icon(
+          Icons.notifications_none_outlined,
+          color: Colors.black87,
+        ),
         onPressed: () {},
       );
     }
 
-    // Lấy role người dùng để quyết định loại badge
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance
           .collection('users')
@@ -118,19 +117,17 @@ class _NotificationBell extends StatelessWidget {
       builder: (context, userSnap) {
         final role = userSnap.hasData && userSnap.data!.exists
             ? ((userSnap.data!.data() as Map<String, dynamic>?)?['role'] ?? '')
-                as String
+                  as String
             : '';
 
-        // Chọn đúng stream badge theo role
         Stream<int> badgeStream;
         if (role == 'student') {
-          badgeStream =
-              InvitationService().streamPendingInvitationsCount(uid!);
+          badgeStream = InvitationService().streamPendingInvitationsCount(uid!);
         } else if (role == 'lecturer') {
-          badgeStream =
-              InvitationService().streamPendingGroupsCountForLecturer(uid!);
+          badgeStream = InvitationService().streamPendingGroupsCountForLecturer(
+            uid!,
+          );
         } else {
-          // Admin hoặc chưa xác định role → không có badge
           return IconButton(
             icon: const Icon(
               Icons.notifications_none_outlined,
@@ -197,7 +194,6 @@ class _NotificationBell extends StatelessWidget {
       );
     } else if (role == 'lecturer') {
       // GV → chuyển sang tab "Chờ GV duyệt" trong màn hình quản lý nhóm
-      // Hiện tại dùng SnackBar hướng dẫn, vì lecturer quản lý nhóm ở tab riêng
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(

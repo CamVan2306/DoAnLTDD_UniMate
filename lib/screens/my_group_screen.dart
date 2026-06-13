@@ -124,7 +124,10 @@ class MyGroupsScreen extends StatelessWidget {
     }
 
     return FutureBuilder<DocumentSnapshot>(
-      future: FirebaseFirestore.instance.collection('projects').doc(group.projectId).get(),
+      future: FirebaseFirestore.instance
+          .collection('projects')
+          .doc(group.projectId)
+          .get(),
       builder: (context, projectSnap) {
         bool isIndividual = false;
         if (projectSnap.hasData && projectSnap.data!.exists) {
@@ -187,7 +190,7 @@ class MyGroupsScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 12),
-              
+
               if (!isIndividual)
                 RichText(
                   text: TextSpan(
@@ -216,16 +219,24 @@ class MyGroupsScreen extends StatelessWidget {
                   String leaderName = "Đang tải...";
                   if (userSnap.hasData && userSnap.data!.exists) {
                     leaderName =
-                        (userSnap.data!.data() as Map<String, dynamic>)['name'] ??
+                        (userSnap.data!.data()
+                            as Map<String, dynamic>)['name'] ??
                         'Không rõ';
                   }
                   return Row(
                     children: [
-                      Icon(isIndividual ? Icons.person : Icons.person_pin, size: 16, color: Colors.grey),
+                      Icon(
+                        isIndividual ? Icons.person : Icons.person_pin,
+                        size: 16,
+                        color: Colors.grey,
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         isIndividual ? "Sinh viên: " : "Trưởng nhóm: ",
-                        style: const TextStyle(color: Colors.grey, fontSize: 14),
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
                       ),
                       Expanded(
                         child: Text(
@@ -247,7 +258,11 @@ class MyGroupsScreen extends StatelessWidget {
               if (!isIndividual)
                 Row(
                   children: [
-                    const Icon(Icons.badge_outlined, size: 16, color: Colors.grey),
+                    const Icon(
+                      Icons.badge_outlined,
+                      size: 16,
+                      color: Colors.grey,
+                    ),
                     const SizedBox(width: 6),
                     const Text(
                       "Vai trò của bạn: ",
@@ -287,8 +302,10 @@ class MyGroupsScreen extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: primaryColor,
                   foregroundColor: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -343,7 +360,7 @@ class MyGroupsScreen extends StatelessWidget {
             ],
           ),
         );
-      }
+      },
     );
   }
 
@@ -371,7 +388,7 @@ class MyGroupsScreen extends StatelessWidget {
       builder: (ctx) => AlertDialog(
         title: const Text('Hủy đăng ký đề tài'),
         content: const Text(
-          'Sau khi hủy, đề tài sẽ được trả về trạng thái trống và nhóm sẽ bị giải thể. Bạn có chắc chắn muốn hủy không?',
+          'Sau khi hủy, đề tài sẽ được trả về trạng thái trống và nhóm sẽ bị giải tán. Bạn có chắc chắn muốn hủy không?',
         ),
         actions: [
           TextButton(
@@ -494,11 +511,7 @@ class MyGroupsScreen extends StatelessWidget {
             child: Text(
               "Hãy vào danh sách đề tài, chọn một đề tài phù hợp và tạo nhóm hoặc cá nhân.",
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-                height: 1.5,
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey, height: 1.5),
             ),
           ),
         ],

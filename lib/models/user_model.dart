@@ -2,7 +2,7 @@ class UserModel {
   final String uid;
   final String name;
   final String email;
-  final String code; // Thay vì mssv_msgv
+  final String code; // MSSV/MSGV
   final String role; // 'student', 'lecturer', 'admin'
   final String className; // Đối với SV là Lớp học phần, GV/Admin có thể để rỗng
   final String phone;

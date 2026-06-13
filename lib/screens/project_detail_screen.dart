@@ -179,7 +179,7 @@ class ProjectDetailScreen extends StatelessWidget {
                       if (project.registeredGroupId.isNotEmpty)
                         _buildRegisteredGroupInfo(),
 
-                      // ── NÚT HÀNH ĐỘNG ──────────────────────────────────
+                      // ── NÚT HÀNH ĐỘNG ─
                       if (isStudent)
                         _buildStudentActions(context, uid)
                       else if (isOwner)
@@ -228,9 +228,9 @@ class ProjectDetailScreen extends StatelessWidget {
     }
   }
 
-  // ── PHẦN SINH VIÊN ─────────────────────────────────────────────────────
+  // ── PHẦN SINH VIÊN ───
   Widget _buildStudentActions(BuildContext context, String uid) {
-    // Nếu đề tài trống → cho phép đăng ký
+    // Nếu đề tài trống thì cho phép đăng ký
     if (project.isAvailable) {
       return SizedBox(
         width: double.infinity,
@@ -261,7 +261,6 @@ class ProjectDetailScreen extends StatelessWidget {
       );
     }
 
-    // Đề tài đã có nhóm → kiểm tra xem SV này có lời mời pending không
     if (project.registeredGroupId.isNotEmpty &&
         (project.status == 'Đang gom nhóm' ||
             project.status == 'Chờ GV duyệt')) {
@@ -274,12 +273,11 @@ class ProjectDetailScreen extends StatelessWidget {
           final invitations = invSnap.data ?? [];
 
           if (invitations.isNotEmpty) {
-            // SV này có lời mời → hiện 2 nút Chấp nhận / Từ chối
+            // SV có lời mời thì hiện 2 nút Chấp nhận / Từ chối
             final invitation = invitations.first;
             return _buildInvitationActionCard(context, invitation, uid);
           }
 
-          // Không có lời mời → thông báo đề tài đang được xử lý
           return Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
@@ -439,9 +437,9 @@ class ProjectDetailScreen extends StatelessWidget {
     );
   }
 
-  // ── PHẦN GIẢNG VIÊN ────────────────────────────────────────────────────
+  // ── PHẦN GIẢNG VIÊN ──
   Widget _buildLecturerActions(BuildContext context) {
-    // Đề tài trống → cho Chỉnh sửa / Xóa
+    // Đề tài trống thì cho Chỉnh sửa / Xóa
     if (project.status == 'Trống') {
       return Row(
         children: [
@@ -489,7 +487,7 @@ class ProjectDetailScreen extends StatelessWidget {
       );
     }
 
-    // Nhóm đang gom thành viên → hiển thị thông tin trạng thái
+    // Nhóm đang gom thành viên thì hiển thị thông tin trạng thái
     if (project.status == 'Đang gom nhóm') {
       return Container(
         width: double.infinity,
@@ -521,12 +519,12 @@ class ProjectDetailScreen extends StatelessWidget {
       );
     }
 
-    // Nhóm chờ GV duyệt → 2 nút Chấp nhận / Từ chối
+    // Nhóm chờ GV duyệt thì hiện 2 nút Chấp nhận / Từ chối
     if (project.status == 'Chờ GV duyệt') {
       return _buildLecturerApprovalButtons(context);
     }
 
-    // Đang triển khai hoặc Đã hoàn tất → thông báo
+    // Đang triển khai hoặc Đã hoàn tất thì thông báo
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -545,7 +543,7 @@ class ProjectDetailScreen extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              'Đề tài đang được triển khai. Theo dõi tiến độ trong tab NHÓM.',
+              'Đề tài đang được triển khai. Theo dõi tiến độ trong NHÓM.',
               style: TextStyle(
                 color: Colors.green.shade800,
                 fontWeight: FontWeight.w600,
@@ -649,9 +647,7 @@ class ProjectDetailScreen extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Phê duyệt nhóm'),
-        content: const Text(
-          'Xác nhận chấp thuận nhóm này thực hiện đề tài? Nhóm sẽ chuyển sang trạng thái "Đang triển khai".',
-        ),
+        content: const Text('Xác nhận chấp nhận nhóm này thực hiện đề tài?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
@@ -784,7 +780,7 @@ class ProjectDetailScreen extends StatelessWidget {
     }
   }
 
-  // Khối thông tin nhóm đã đăng ký đề tài (fix overflow)
+  // Khối thông tin nhóm đã đăng ký đề tài
   Widget _buildRegisteredGroupInfo() {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
@@ -861,7 +857,6 @@ class ProjectDetailScreen extends StatelessWidget {
                 ],
               ),
               const Divider(height: 20),
-              // Fix overflow: dùng Row + Expanded cho tên nhóm
               Row(
                 children: [
                   const Text(

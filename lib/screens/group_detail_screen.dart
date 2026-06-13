@@ -127,7 +127,8 @@ class GroupDetailScreen extends StatelessWidget {
                       final bool isMemberLeader = member.uid == group.leaderUid;
                       // Nhóm trưởng có thể xóa thành viên (không phải chính mình),
                       // chỉ khi nhóm đang gom nhóm và chưa hoàn tất
-                      final bool canRemove = isLeader &&
+                      final bool canRemove =
+                          isLeader &&
                           !isMemberLeader &&
                           _isAssembling &&
                           !_isCompleted;
@@ -160,16 +161,16 @@ class GroupDetailScreen extends StatelessWidget {
                                 ),
                               )
                             : canRemove
-                                ? IconButton(
-                                    icon: const Icon(
-                                      Icons.remove_circle_outline,
-                                      color: Colors.red,
-                                    ),
-                                    tooltip: 'Xóa thành viên',
-                                    onPressed: () => _confirmRemoveMember(
-                                        context, member),
-                                  )
-                                : null,
+                            ? IconButton(
+                                icon: const Icon(
+                                  Icons.remove_circle_outline,
+                                  color: Colors.red,
+                                ),
+                                tooltip: 'Xóa thành viên',
+                                onPressed: () =>
+                                    _confirmRemoveMember(context, member),
+                              )
+                            : null,
                       );
                     },
                   ),
@@ -202,17 +203,17 @@ class GroupDetailScreen extends StatelessWidget {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: group.milestones.length,
-                        separatorBuilder: (_, __) => const Divider(
-                          height: 1,
-                          color: Color(0xFFF0F4F8),
-                        ),
+                        separatorBuilder: (_, __) =>
+                            const Divider(height: 1, color: Color(0xFFF0F4F8)),
                         itemBuilder: (context, index) {
                           final m = group.milestones[index];
                           final score = m['score'] ?? 0.0;
                           return ListTile(
                             title: Text(
                               "Giai đoạn ${m['step']} (${m['percent']}%)",
-                              style: const TextStyle(fontWeight: FontWeight.w600),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                             subtitle: Text(m['status'] ?? 'CHƯA NỘP'),
                             trailing: Text(
@@ -313,13 +314,14 @@ class GroupDetailScreen extends StatelessWidget {
   }
 
   Future<void> _confirmRemoveMember(
-      BuildContext context, UserModel member) async {
+    BuildContext context,
+    UserModel member,
+  ) async {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Xóa thành viên'),
-        content: Text(
-            'Bạn có chắc muốn xóa "${member.name}" khỏi nhóm không?'),
+        content: Text('Bạn có chắc muốn xóa "${member.name}" khỏi nhóm không?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
@@ -343,16 +345,12 @@ class GroupDetailScreen extends StatelessWidget {
             .collection('groups')
             .doc(group.groupId)
             .update({
-          'memberUids': FieldValue.arrayRemove([member.uid]),
-        });
-
-        // Cập nhật currentMembers trong projects
+              'memberUids': FieldValue.arrayRemove([member.uid]),
+            });
         await FirebaseFirestore.instance
             .collection('projects')
             .doc(group.projectId)
-            .update({
-          'currentMembers': FieldValue.increment(-1),
-        });
+            .update({'currentMembers': FieldValue.increment(-1)});
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -361,7 +359,7 @@ class GroupDetailScreen extends StatelessWidget {
               backgroundColor: Colors.orange,
             ),
           );
-          Navigator.pop(context); // pop để reload GroupDetailScreen
+          Navigator.pop(context);
         }
       } catch (e) {
         if (context.mounted) {
