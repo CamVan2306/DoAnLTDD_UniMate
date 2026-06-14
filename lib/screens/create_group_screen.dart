@@ -90,6 +90,21 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
     final studentData = await InvitationService().findStudentByMSSV(mssv);
     if (studentData != null) {
+      final courseClass = widget.project.courseClass;
+      if (courseClass.isNotEmpty &&
+          courseClass != 'Dành cho tất cả' &&
+          (studentData['class'] ?? '') != courseClass) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Sinh viên không thuộc lớp này!'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return;
+      }
+
       setState(() {
         addedMembers.add(UserModel.fromMap(studentData));
         _mssvController.clear();

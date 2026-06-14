@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user_model.dart';
 import '../services/invitation_service.dart';
 
@@ -68,7 +69,26 @@ class _InviteMemberBottomSheetState extends State<InviteMemberBottomSheet> {
 
     final studentData = await InvitationService().findStudentByMSSV(mssv);
     String? status;
+
     if (studentData != null) {
+      try {
+        final projectDoc = await FirebaseFirestore.instance
+            .collection('projects')
+            .doc(widget.projectId)
+            .get();
+        final courseClass = projectDoc.data()?['courseClass'] ?? '';
+
+        if (courseClass.isNotEmpty &&
+            courseClass != 'Dành cho tất cả' &&
+            (studentData['class'] ?? '') != courseClass) {
+          setState(() {
+            _isLoading = false;
+            _errorMessage = 'Sinh viên không thuộc lớp này!';
+          });
+          return;
+        }
+      } catch (e) {}
+
       status = await InvitationService().checkInvitationStatus(
         groupId: widget.groupId,
         inviteeUid: studentData['uid'],

@@ -128,11 +128,11 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                                   style: TextStyle(fontSize: 14),
                                 ),
                               ),
-                              ...subjects.map(
-                                (s) => DropdownMenuItem<String?>(
-                                  value: s.name,
+                              ...subjects.map((s) => s.name).toSet().map(
+                                (name) => DropdownMenuItem<String?>(
+                                  value: name,
                                   child: Text(
-                                    s.name,
+                                    name,
                                     style: const TextStyle(fontSize: 14),
                                   ),
                                 ),
@@ -169,62 +169,64 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                         },
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    // Dropdown Lớp học phần
-                    Expanded(
-                      child: StreamBuilder<List<CourseClassModel>>(
-                        stream: _classStream,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasError) {
-                            return Text(
-                              'Lỗi: ${snapshot.error}',
-                              style: const TextStyle(
-                                color: Colors.red,
-                                fontSize: 10,
-                              ),
-                            );
-                          }
-                          final classes = snapshot.data ?? [];
-                          if (snapshot.connectionState ==
-                                  ConnectionState.active &&
-                              selectedClassFilter != null &&
-                              !classes.any(
-                                (c) => c.name == selectedClassFilter,
-                              )) {
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              if (mounted) {
-                                setState(() => selectedClassFilter = null);
-                              }
-                            });
-                          }
-                          return _buildDropdownBox(
-                            defaultLabel: 'Lớp',
-                            value: selectedClassFilter,
-                            items: [
-                              const DropdownMenuItem<String?>(
-                                value: null,
-                                child: Text(
-                                  'Tất cả',
-                                  style: TextStyle(fontSize: 14),
+                    if (!user.isStudent) ...[
+                      const SizedBox(width: 12),
+                      // Dropdown Lớp học phần
+                      Expanded(
+                        child: StreamBuilder<List<CourseClassModel>>(
+                          stream: _classStream,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return Text(
+                                'Lỗi: ${snapshot.error}',
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 10,
                                 ),
-                              ),
-                              ...classes.map(
-                                (c) => DropdownMenuItem<String?>(
-                                  value: c.name,
+                              );
+                            }
+                            final classes = snapshot.data ?? [];
+                            if (snapshot.connectionState ==
+                                    ConnectionState.active &&
+                                selectedClassFilter != null &&
+                                !classes.any(
+                                  (c) => c.name == selectedClassFilter,
+                                )) {
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                if (mounted) {
+                                  setState(() => selectedClassFilter = null);
+                                }
+                              });
+                            }
+                            return _buildDropdownBox(
+                              defaultLabel: 'Lớp',
+                              value: selectedClassFilter,
+                              items: [
+                                const DropdownMenuItem<String?>(
+                                  value: null,
                                   child: Text(
-                                    c.name,
-                                    style: const TextStyle(fontSize: 14),
+                                    'Tất cả',
+                                    style: TextStyle(fontSize: 14),
                                   ),
                                 ),
-                              ),
-                            ],
-                            onChanged: (newValue) {
-                              setState(() => selectedClassFilter = newValue);
-                            },
-                          );
-                        },
+                                ...classes.map((c) => c.name).toSet().map(
+                                  (name) => DropdownMenuItem<String?>(
+                                    value: name,
+                                    child: Text(
+                                      name,
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                              onChanged: (newValue) {
+                                setState(() => selectedClassFilter = newValue);
+                              },
+                            );
+                          },
+                        ),
                       ),
-                    ),
+                    ],
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -386,7 +388,7 @@ class ProjectCard extends StatelessWidget {
         return const Color(0xFF005A9E);
       case 'Đã hoàn tất':
         return Colors.green.shade700;
-      case 'Khóa':
+      case 'Đã khóa':
         return Colors.red;
       default:
         return Colors.grey;

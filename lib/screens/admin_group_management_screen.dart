@@ -127,10 +127,6 @@ class _AdminGroupManagementScreenState
                             child: Text('Đang gom nhóm'),
                           ),
                           DropdownMenuItem(
-                            value: 'Chờ duyệt',
-                            child: Text('Chờ duyệt'),
-                          ),
-                          DropdownMenuItem(
                             value: 'Chờ GV duyệt',
                             child: Text('Chờ GV duyệt'),
                           ),

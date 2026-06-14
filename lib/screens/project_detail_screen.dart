@@ -223,6 +223,8 @@ class ProjectDetailScreen extends StatelessWidget {
         return const Color(0xFF005A9E);
       case 'Đã hoàn tất':
         return Colors.green.shade700;
+      case 'Đã khóa':
+        return Colors.red;
       default:
         return Colors.grey;
     }
@@ -257,6 +259,38 @@ class ProjectDetailScreen extends StatelessWidget {
               fontSize: 16,
             ),
           ),
+        ),
+      );
+    }
+
+    // Nếu đề tài trống nhưng đã hết hạn
+    if (project.registeredGroupId.isEmpty && project.status == 'Đã khóa' && project.isExpired) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.red.shade50,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.red.shade200),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.timer_off_outlined,
+              color: Colors.red.shade700,
+              size: 20,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                'Đề tài này đã hết hạn đăng ký.',
+                style: TextStyle(
+                  color: Colors.red.shade800,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
         ),
       );
     }

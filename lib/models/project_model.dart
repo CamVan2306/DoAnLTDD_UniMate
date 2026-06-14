@@ -34,6 +34,33 @@ class ProjectModel {
   });
 
   factory ProjectModel.fromMap(Map<String, dynamic> map, String docId) {
+    String currentStatus = map['status'] ?? 'Trống';
+    String deadlineStr = map['deadline'] ?? '';
+
+    bool expired = false;
+    try {
+      if (deadlineStr.isNotEmpty) {
+        final parts = deadlineStr.split('/');
+        if (parts.length == 3) {
+          final deadlineDate = DateTime(
+            int.parse(parts[2]),
+            int.parse(parts[1]),
+            int.parse(parts[0]),
+            23,
+            59,
+            59,
+          );
+          if (DateTime.now().isAfter(deadlineDate)) {
+            expired = true;
+          }
+        }
+      }
+    } catch (e) {}
+
+    if (expired && currentStatus == 'Trống') {
+      currentStatus = 'Đã khóa';
+    }
+
     return ProjectModel(
       projectId: docId,
       title: map['title'] ?? '',
@@ -42,9 +69,9 @@ class ProjectModel {
       maxMembers:
           map['maxMembers'] ?? (map['projectType'] == 'Cá nhân' ? 1 : 0),
       currentMembers: map['currentMembers'] ?? 0,
-      deadline: map['deadline'] ?? '',
+      deadline: deadlineStr,
       requirements: map['requirements'] ?? '',
-      status: map['status'] ?? 'Trống',
+      status: currentStatus,
       subjectName: map['subjectName'] ?? 'Chưa phân loại',
       courseClass: map['courseClass'] ?? 'Dành cho tất cả',
       projectType: map['projectType'] ?? 'Nhóm',
@@ -73,6 +100,28 @@ class ProjectModel {
     };
   }
 
-  // Hàm kiểm tra đồ án còn trống không
-  bool get isAvailable => registeredGroupId.isEmpty && status == 'Trống';
+  // Kiểm tra đề tài đã quá hạn đăng ký chưa
+  bool get isExpired {
+    try {
+      if (deadline.isEmpty) return false;
+      final parts = deadline.split('/');
+      if (parts.length != 3) return false;
+      // Ngày hết hạn tính đến 23:59:59 của ngày đó
+      final deadlineDate = DateTime(
+        int.parse(parts[2]),
+        int.parse(parts[1]),
+        int.parse(parts[0]),
+        23,
+        59,
+        59,
+      );
+      return DateTime.now().isAfter(deadlineDate);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // Hàm kiểm tra đồ án còn trống không và còn hạn
+  bool get isAvailable =>
+      registeredGroupId.isEmpty && status == 'Trống' && !isExpired;
 }
