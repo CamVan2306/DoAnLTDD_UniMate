@@ -76,5 +76,5 @@ Hệ thống được chia thành 3 vai trò chính với các chức năng chuy
 - [ ] **Smart Suggestion:** Thuật toán gợi ý đề tài tự động dựa trên dữ liệu học tập.
 
 ---
-
+## Link Figma: https://www.figma.com/design/AupJOqNxGC77eWh6joQuQJ/Untitled?node-id=0-1&t=M8gj31EUi49PT1jT-0
 **© App chạy được là nộp - Đồ án lập trình di động**
