@@ -1,4 +1,4 @@
-# BÁO CÁO CÔNG VIỆC SV2 – TRẦN THỊ CẨM VÂN (TUẦN 2)
+# BÁO CÁO CÔNG VIỆC SV2 (TUẦN 2)
 **Phân công:** Network / Middleware  
 **Dự án:** GardenMist - Hệ thống Phun sương tự động  
 **Thời lượng thực hiện:** 6 giờ  
